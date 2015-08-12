@@ -93,12 +93,15 @@ def background():
     while True:
         print count
         count += 1
+        msg = str(time.time())
+        msg = json.dumps({"test": str(time.time())})
+        for sub in subscriptions[:]:
+            sub.put(msg)
         gevent.sleep(1)
 
 if __name__ == '__main__':
     app.debug = True
     server = WSGIServer(("", 5000), app)
-    #server.serve_forever()
     srv_greenlet = gevent.spawn(server.start)
     background_task = gevent.spawn(background)
     try:
