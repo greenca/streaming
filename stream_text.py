@@ -88,7 +88,21 @@ def subscribe():
 
     return Response(gen(), mimetype="text/event-stream")
 
+def background():
+    count = 0
+    while True:
+        print count
+        count += 1
+        gevent.sleep(1)
+
 if __name__ == '__main__':
     app.debug = True
     server = WSGIServer(("", 5000), app)
-    server.serve_forever()
+    #server.serve_forever()
+    srv_greenlet = gevent.spawn(server.start)
+    background_task = gevent.spawn(background)
+    try:
+        gevent.joinall([srv_greenlet, background_task])
+    except KeyboardInterrupt:
+        print "Exiting"
+
