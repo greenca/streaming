@@ -1,5 +1,5 @@
 import gevent
-from gevent.wsgi import WSGIServer
+from gevent.pywsgi import WSGIServer
 from gevent.queue import Queue
 
 from flask import Flask, Response, request
@@ -32,7 +32,7 @@ app = Flask(__name__)
 subscriptions = []
 
 @app.route('/')
-def hello_world():
+def index():
     debug_template = """
      <html>
        <head>
