@@ -1,0 +1,51 @@
+<html>
+<body>
+<h1>Server sent events</h1>
+<div id="event"></div>
+<canvas id="ex1" width="500" height="150"
+	style="border: 1px solid #cccccc;">
+  HTML5 Canvas not supported
+</canvas>
+
+<script>
+
+  var eventOutputContainer = document.getElementById("event");
+  var evtSrc = new EventSource("/subscribe");
+
+  evtSrc.onmessage = function(e) {
+  showData(e);
+  }
+
+  function showData(e) {
+      var jdata = JSON.parse(e.data);
+      console.log(e.data);
+      console.log(jdata.test);
+
+      var canvas = document.getElementById("ex1");
+      var context = canvas.getContext("2d");
+    
+      var height = jdata.red.length;
+      var width = jdata.red[0].length;
+      var imageData = context.createImageData(width, height);
+      console.log(height);
+      console.log(width);
+
+      for (x = 0; x < width; x++) {
+          for (y = 0; y < height; y++) {
+              var index = 4 * (x + y * width);
+              imageData.data[index] = jdata.red[y][x];
+              imageData.data[index + 1] = jdata.green[y][x];
+              imageData.data[index + 2] = jdata.blue[y][x];
+              imageData.data[index + 3] = 255;
+          }
+      }
+
+      var canvasX = 0;
+      var canvasY = 0;
+
+      context.putImageData(imageData, canvasX, canvasY);
+  }
+
+</script>
+</body>
+</html>
